@@ -4,7 +4,7 @@
  * @author Christian Ziegenrücker
  * @version 0.1
  * 
- * Druper - Drupal Repo Builder
+ * DePo - Drupal Deploy based on Repo
  */
 
 switch ($argv[1]) {
