@@ -1,0 +1,7 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	ignorecase = true
+[remote "origin"]
+	url = manifest.xml
+	fetch = +refs/heads/*:refs/remotes/origin/*
