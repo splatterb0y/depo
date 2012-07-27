@@ -56,17 +56,19 @@ function _sync() {
     
     echo "\033[1;37mRepo started...\033[0m".PHP_EOL;
     
+    passthru('repo sync');
+    
     try {
                 $manifest = new SimpleXmlElement('file://'.getcwd().'/.repo/manifest.xml', NULL, TRUE);  
                 
                 $i = 0;
                 foreach ($manifest as $project) {
-                                     
+                    //If patch-parent available start patcher.                
                     if ($project->patch){
                         require_once('./libs/patcher.inc');
                         patcher($project);
                     }
-                    
+                     
                     if(isset($project['git-version']) && $project['git-version'] == true) {
                         require_once('libs/versioner.inc');
                         versioner($project);                        
@@ -75,8 +77,6 @@ function _sync() {
                     
                 }
                 
-                
-
                 unset($manifest);
             }
             catch (Exception $ex) {

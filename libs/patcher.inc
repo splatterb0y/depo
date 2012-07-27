@@ -1,35 +1,30 @@
 <?php
-function patcher ($project){
-    
-   // echo ''.getcwd();
-       
-       $patchname = basename($patchpfad);
-       $patchpfad = $project->patch['path'];
-       
-       
-       //echo $check;
-    
-    shell_exec( 'mkdir ' . getcwd() . '/cache/' . $patchname );
-    shell_exec( 'wget ' . $patchpfad . ' -O' . getcwd() . '/' . $patchname );
-
+function patcher ( $project ) {
+   
+    // Execute for every patch-child
+    foreach ( $project->patch as $patch ) {
         
-    //passthru('git apply --stat ' . $modulname, &$return);
-    
-    exec('cd ' . getcwd() . 'git apply --check ' . $modulname, &$return);
-    
-    if ($return == 0){
-        shell_exec( 'git apply --stat ' . $modulname, &$return );
-        shell_exec( 'git am < ' . $patchpfad, &$return);   
+        $patchPath = (string) $patch['path'];
+        $patchTarget = (string) '/' . $project['path'];
+        $patchName = basename($patchPath);
         
+        // Make directory for download.
+        @mkdir( getcwd() . '/.depo', 0777, TRUE );
+        
+        // Load patch.
+        exec( 'wget -q ' . $patchPath . ' -O' . getcwd() . '/.depo/' . $patchName );
+        
+        //Patch anwenden.
+        passthru( 'cd ' . getcwd() . $patchTarget . ' &&
+            git am < ' . getcwd() .  '/.depo/' . $patchName, &$return );
+        
+        // On error exit and show notification.
+        if ( $return != 0 ) {
+            die( "\033[31m Something went very very wrong.\033[0m".PHP_EOL );
         }
-    else {
-        echo "\033[31m Something went very very wrong.\033[0m".PHP_EOL;
     }
-    
-    //passthru('git am < cat ' . $patchpfad, &$return);
-    
-    
-    
+       
     return;
 }
 ?>
+ 
