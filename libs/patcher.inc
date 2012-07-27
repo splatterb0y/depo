@@ -1,7 +1,7 @@
 <?php
 function patcher ( $project ) {
    
-    // Execute for every patch-child
+    // Execute for every patch child
     foreach ( $project->patch as $patch ) {
         
         $patchPath = (string) $patch['path'];
