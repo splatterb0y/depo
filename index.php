@@ -82,11 +82,9 @@ function _sync() {
 //                    $modulpfad = (string) $project['path'];
 //                    echo "\n";
 //                    print_r((string) $project['revision']); 
-                    
-                    $patchpfad = (string) $manifest->project->patch['path'];
-                    
+                                     
                     if ($project->patch){
-                        patcher($patchpfad, $modulname);
+                        patcher($project);
                     }
 //                    else{
 //                        echo 'err';
@@ -159,25 +157,36 @@ function _sync() {
  */
 
 
-function patcher ($patchpfad, $modulname){
+function patcher ($project){
     
    // echo ''.getcwd();
        
        $patchname = basename($patchpfad);
+       $patchpfad = $project->patch['path'];
        
        
        //echo $check;
     
-       if (!file_exists($check)){
-           shell_exec( 'mkdir ' . getcwd() . '/cache/' . $patchname );
-           shell_exec( 'wget ' . $patchpfad . ' -O' . getcwd() . '/cache/' . $patchname . '/' . $patchname );
-       }    
+    shell_exec( 'mkdir ' . getcwd() . '/cache/' . $patchname );
+    shell_exec( 'wget ' . $patchpfad . ' -O' . getcwd() . '/' . $patchname );
+
         
-    passthru('git apply --stat ' . $modulname, &$return);
-    passthru('git apply --check ' . $modulname, &$return);
+    //passthru('git apply --stat ' . $modulname, &$return);
+    
+    exec('cd ' . getcwd() . 'git apply --check ' . $modulname, &$return);
+    
+    if ($return == 0){
+        shell_exec( 'git apply --stat ' . $modulname, &$return );
+        shell_exec( 'git am < ' . $patchpfad, &$return);   
+        
+        }
+    else {
+        echo "\033[31m Something went very very wrong.\033[0m".PHP_EOL;
+    }
+    
     //passthru('git am < cat ' . $patchpfad, &$return);
     
-    echo "complete";
+    
     
     return;
 }
