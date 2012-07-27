@@ -16,18 +16,6 @@
  * @todo Repo Refs fixen, damit pushen auch möglich ist
  */
 
-/**
- *  
- * $object->@attributes->name;
- * 
- * repo init -u ssh://git@softlevelweb.de/opt/git-repo/manifest
- * 
- * repo sync
- * 
- * ./repo/manifest.xml
- * 
- */
-
 if (!isset($argv[1])) {
     echo "\033[31m No parameters given.\033[0m".PHP_EOL;
 } 
@@ -51,6 +39,7 @@ function _init() {
     } 
     else {
 
+        echo "\033[1;37m Repo started...\033[0m".PHP_EOL;
         passthru('repo init -u '.$argv[2], &$return);
 
         if ($return == 0) {
@@ -65,50 +54,23 @@ function _init() {
 
 function _sync() {
     
+    echo "\033[1;37mRepo started...\033[0m".PHP_EOL;
     
     try {
                 $manifest = new SimpleXmlElement('file://'.getcwd().'/.repo/manifest.xml', NULL, TRUE);  
-                                
-                //print_r($manifest);  
-                                  
-                //print_r($manifest->project[43]->attributes()->name);
                 
                 $i = 0;
                 foreach ($manifest as $project) {
-                                        
-//                    echo "\n\n" . 'Datensatz: ' . $i . "\n";
-                    $modulname = (string) $project['name'];  
-//                    echo "\n";
-//                    $modulpfad = (string) $project['path'];
-//                    echo "\n";
-//                    print_r((string) $project['revision']); 
                                      
                     if ($project->patch){
+                        require_once('./libs/patcher.inc');
                         patcher($project);
                     }
-//                    else{
-//                        echo 'err';
-//                    }
-                        
                     
-                    // hat das nen Patch cild,
-                    // 
-                    // wenn ( hat patch ) dann
-                    //    patcher();
-                    //    
-                    // hat das nen download child
-                    
-                    /*
-                    
-                    
-                   
-                    echo "\n";                                        
-                    $patchpfad = (string) $manifest->project->patch['path'];
-                    
-                    
-                    $patchpfad = NULL;
-                    patcher($patchpfad,$modulpfad,$modulname);*/
-         
+                    if(isset($project['git-version']) && $project['git-version'] == true) {
+                        require_once('libs/versioner.inc');
+                        versioner($project);                        
+                    }
                     $i++;
                     
                 }
@@ -122,74 +84,5 @@ function _sync() {
                 echo $ex;
             }
     
-    
-    // Repo sync aufrufen, wenn erfolgreich alle oben angegebene Todos ausführen
-    // Im besten Falle in sinnvolle Funktionen unterteilen. :D
 }
-
-/*
-* 
- * try {
-                $manifest = new SimpleXmlElement('file://'.getcwd().'/.repo/manifest.xml', NULL, TRUE);  
-
-                print_r($manifest);
-
-                unset($manifest);
-            }
-            catch (Exception $ex) {
-                echo "\033[31mSomething went wrong while reading the manifest.\033[0m".PHP_EOL;
-
-            }
-*/
-
-/* Wie Patch funktionieren soll: 
- * 
-   <project name="drupal" path="buchhandelsweb" revision="refs/tags/7.14">
-        <patch path="http://google.de/ichbineinpatch.diff" />
-    </project>
- * 
- * 1. Patch herunterladen (wget oder curl) in einen Pfad .depo
- *    * .depo/<projectname>/<patchname> - Cache anlegen
- * 2. Git-Patch Dreisatz
- *    * git apply --stat $patchpfad
- *    * git apply --check $patchpfad
- *    * git am < cat $patchpfad
- */
-
-
-function patcher ($project){
-    
-   // echo ''.getcwd();
-       
-       $patchname = basename($patchpfad);
-       $patchpfad = $project->patch['path'];
-       
-       
-       //echo $check;
-    
-    shell_exec( 'mkdir ' . getcwd() . '/cache/' . $patchname );
-    shell_exec( 'wget ' . $patchpfad . ' -O' . getcwd() . '/' . $patchname );
-
-        
-    //passthru('git apply --stat ' . $modulname, &$return);
-    
-    exec('cd ' . getcwd() . 'git apply --check ' . $modulname, &$return);
-    
-    if ($return == 0){
-        shell_exec( 'git apply --stat ' . $modulname, &$return );
-        shell_exec( 'git am < ' . $patchpfad, &$return);   
-        
-        }
-    else {
-        echo "\033[31m Something went very very wrong.\033[0m".PHP_EOL;
-    }
-    
-    //passthru('git am < cat ' . $patchpfad, &$return);
-    
-    
-    
-    return;
-}
-
-
 ?>
