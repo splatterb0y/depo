@@ -9,10 +9,8 @@
  *
  * DePo - Drupal Deploy based on Repo
  * 
- * @todo implementieren patches 
  * @todo implementieren version nachtragen für module
  * @todo drush befehle ausführen
- * @todo dateidownload
  * @todo Repo Refs fixen, damit pushen auch möglich ist
  */
 
