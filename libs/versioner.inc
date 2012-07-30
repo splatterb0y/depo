@@ -9,7 +9,7 @@ function versioner ($project) {
     $patchName = basename($patchDestination);                                         // name of the patch
 
     //write revisionsinformation into modulename.info
-    passthru('echo '.$projectRev.' >> ' . getcwd(). '/' . $projectPath . '/' .
+    passthru('echo "version = '.$projectRev.'" >> ' . getcwd(). '/' . $projectPath . '/' .
             $infoName . '.info', $return);
     passthru('git commit -a -m "Version: '. $projectRev .'"');
     
