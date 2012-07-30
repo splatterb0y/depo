@@ -5,7 +5,7 @@ function versioner ($project) {
     $projectPath = (string)  $project['path'];                                       //path of the project
     $projectRev =  array_pop(explode('/', $project['revision']));                       // extracts the project revision
     $infoName = array_pop(explode('/', $project['name']));                            //name of the info file
-    $patchDestination = (string)  $projectPath . '/' . $project->download['dest'];  // target of the patch
+    $patchDestination = (string)  $projectPath . '/' . $project['name'];  // target of the patch
     $patchName = basename($patchDestination);                                         // name of the patch
 
     //write revisionsinformation into modulename.info
