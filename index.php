@@ -64,9 +64,13 @@ function _sync() {
                 $i = 0;
                 foreach ($manifest as $project) {
                     //If patch child available start patcher.                
-                    if ($project->patch){
+                    if ($project->patch) {
                         require_once('./libs/patcher.inc');
                         patcher($project);
+                    }
+                    if($project->download) {
+                        require_once('./libs/downloader.inc');
+                        downloader($project);
                     }
                      
                     if(isset($project['git-version']) && $project['git-version'] == true) {
