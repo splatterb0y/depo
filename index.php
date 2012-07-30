@@ -62,7 +62,7 @@ function _sync() {
                 
                 foreach ( $manifest as $project ) {
                     //If patch child available start patcher.                
-                    if ($project->patch) {
+                    if ( $project->patch ) {
                         require_once('./libs/patcher.inc');
                         patcher($project);
                     }

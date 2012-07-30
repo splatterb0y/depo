@@ -14,6 +14,20 @@ function versioner ($project) {
             break;
         
     }
+    
+
+    
+    foreach(glob($patchDestination . '*.info') as $element)    
+{    
+    echo "Filename: " . $element;
+    
+    exec('echo "version = '.$projectRev.'" >> ' . getcwd(). '/' . $element, &$output, &$returnEcho);
+}    
+    
+    
+    
+    
+    
     //write revisionsinformation into modulename.info
     exec('echo "version = '.$projectRev.'" >> ' . getcwd(). '/' . $projectPath . '/' .
             $infoName . '.info', &$output, &$returnEcho);
