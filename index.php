@@ -41,10 +41,10 @@ function _init() {
         passthru('repo init -u '.$argv[2], &$return);
 
         if ($return == 0) {
-            echo "\033[32mRepo finished successfully.\033[0m".PHP_EOL;
+            echo "\033[32m Repo finished successfully.\033[0m".PHP_EOL;
         } 
         else {
-            echo "\033[31mRepo not finished successfully.\033[0m".PHP_EOL;
+            echo "\033[31m Repo not finished successfully.\033[0m".PHP_EOL;
         }
         
     }
@@ -52,7 +52,7 @@ function _init() {
 
 function _sync() {
     
-    echo "\033[1;37mRepo started...\033[0m".PHP_EOL;
+    echo "\033[1;37m Repo started...\033[0m".PHP_EOL;
     
     passthru('repo sync');
     
@@ -82,7 +82,7 @@ function _sync() {
                 unset($manifest);
             }
             catch (Exception $ex) {
-                echo "\033[31mSomething went wrong while reading the manifest.\033[0m".PHP_EOL;
+                echo "\033[31m Something went wrong while reading the manifest.\033[0m".PHP_EOL;
                 echo $ex;
             }
     
