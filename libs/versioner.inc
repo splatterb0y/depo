@@ -8,39 +8,50 @@ function versioner ($project) {
     $patchDestination = (string)  $projectPath . '/' . $project['name'];  
     $patchName = basename($patchDestination); 
     
-    $datei = glob($patchDestination . '*.info');
+    foreach(rGlob( getcwd(). '/' . $projectPath . "/*.info") as $files) {
+         exec('echo "version = '.$projectRev.'" >> '. $files, &$output, &$returnEcho1);
+         exec('echo "project = '.$infoName.'" >> ' .$files, &$output, &$returnEcho2);
+    }
     
-    foreach ( $datei as $element )    
-        {    
-            exec('echo "version = '.$projectRev.'" >> ' . getcwd(). '/' 
-                    . $element, &$output, &$returnEcho);
-            
-            exec('cd ' . getcwd() . '/' . $projectPath . ' && git commit -a -m "Version: '
-                . $projectRev .'"', &$output, &$returnGit);
-            
-            //echo "$element\n";
-        }    
-    
-    //write revisionsinformation into modulename.info
-    exec('echo "version = '.$projectRev.'" >> ' . getcwd(). '/' . $projectPath . '/' .
-            $infoName . '.info', &$output, &$returnEcho);
-    
-    if ( $returnEcho != 0 ) {
+    //write revisionsinformation into modulename.info 
+    if ( $returnEcho1 != 0 &&  $returnEcho2 != 0) {
         die( "\033[31m Writing of .info for " . $patchName . " failed.\033[0m".PHP_EOL);
     }
+    
     // commit with git
     exec('cd ' . getcwd() . '/' . $projectPath . ' && git commit -a -m "Version: '
                 . $projectRev .'"', &$output, &$returnGit);
 //    
     if ( $returnGit != 0 ) {
-        print_r($project);
-        die( "\033[31m Commit of version " . $projectRev . ' to ' . $patchName 
+        die( "\033[31m Writing version " . $projectRev . ' to ' . $patchName 
                . " failed.\033[0m".PHP_EOL); 
     }
     else {
-       echo "\033[32m Commit of version ".$projectRev. ' to ' . $patchName 
+        echo "\033[32m Writing version ".$projectRev. ' to ' . $patchName 
                . " complete.\033[0m".PHP_EOL;
     }
     
     }
+
+/**
+ * @url http://bit.ly/NEvV5r
+ */
+function rGlob($pattern = '*', $flags = 0, $path = false)
+{
+    if (!$path)
+    {
+        $path = dirname($pattern).DIRECTORY_SEPARATOR;
+    }
+ 
+    $pattern    = basename($pattern);
+    $paths      = glob($path.'*', GLOB_MARK|GLOB_ONLYDIR|GLOB_NOSORT);
+    $files      = glob($path.$pattern, $flags);
+    foreach ($paths as $path)
+    {
+        $files = array_merge($files, rGlob($pattern, $flags, $path));
+    }
+    return $files;
+
+    
+}
 ?>

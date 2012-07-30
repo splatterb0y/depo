@@ -20,11 +20,15 @@ function patcher ( $project ) {
         
         //Patch anwenden.
         passthru( 'cd ' . getcwd() . $patchTarget . ' &&
-            git am < ' . getcwd() .  '/.depo/' . $patchName, &$returnGit );
+            git am -q < ' . getcwd() .  '/.depo/' . $patchName, &$returnGit );
         
         // On error exit and show notification.
         if ( $returnGit != 0 ) {
-            die( "\033[31m Something went very very wrong.\033[0m".PHP_EOL );
+            die( "\033[31m Applying ". $patchName . ' to ' . $project['name'] 
+               . " failed.\033[0m".PHP_EOL );
+        } else {
+             echo "\033[32m Applying ". $patchName . ' to ' . $project['name'] 
+               . " successful.\033[0m".PHP_EOL;
         }
     }
        
