@@ -2,21 +2,21 @@
 function downloader($project) {
         
     $patchSource = (string) $project->download['src'];
-    $projectPath = (string)  $project['path'];
-    $patchDestination = (string)  $projectPath . '/' . $project->download['dest'];
+    $projectPath = (string) $project['path'];
+    $patchDestination = (string) $projectPath . '/' . $project->download['dest'];
     
     //the filename
     $patchName = basename($patchDestination);
     
     //the patch destination without filename
-    $patchDestination =  substr($patchDestination,0,strrpos($patchDestination,"/") + 1 );
+    $patchDestination = substr($patchDestination, 0, strrpos($patchDestination, "/") + 1);
         
     //creates the target directory
     @mkdir(getcwd() . '/' . $patchDestination, 0777, TRUE);
     
     //downloads the patch and saves it in the before created directory
-    passthru( 'wget -q ' . $patchSource . ' -O' . getcwd() . '/' .$patchDestination . 
-           $patchName, &$return );
+    exec( 'wget -q ' . $patchSource . ' -O' . getcwd() . '/' . $patchDestination . 
+           $patchName, &$output, &$return );
     
     $target = '/' .$patchDestination . $patchName;
     

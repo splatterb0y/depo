@@ -14,11 +14,11 @@
  * @todo Repo Refs fixen, damit pushen auch möglich ist
  */
 
-if (!isset($argv[1])) {
+if ( !isset($argv[1]) ) {
     echo "\033[31m No parameters given.\033[0m".PHP_EOL;
 } 
 else {
-    switch ($argv[1]) {
+    switch ( $argv[1] ) {
         case 'init':
                 _init();
             break;
@@ -32,7 +32,7 @@ function _init() {
 
     global $argv; 
 
-    if (empty($argv[2])) {
+    if ( empty($argv[2]) ) {
         echo "\033[31m Please provide a manifest file.\033[0m".PHP_EOL;
     } 
     else {
@@ -60,18 +60,18 @@ function _sync() {
                 $manifest = new SimpleXmlElement('file://'.getcwd().'/.repo/manifest.xml', NULL, TRUE);  
                 
                 $i = 0;
-                foreach ($manifest as $project) {
+                foreach ( $manifest as $project ) {
                     //If patch child available start patcher.                
                     if ($project->patch) {
                         require_once('./libs/patcher.inc');
                         patcher($project);
                     }
-                    if($project->download) {
+                    if( $project->download ) {
                         require_once('./libs/downloader.inc');
                         downloader($project);
                     }
                      
-                    if(isset($project['git-version']) && $project['git-version'] == true) {
+                    if( isset($project['git-version']) && $project['git-version'] == true ) {
                         require_once('libs/versioner.inc');
                         versioner($project);                        
                     }
@@ -79,9 +79,9 @@ function _sync() {
                     
                 }
                 
-                unset($manifest);
+                unset( $manifest );
             }
-            catch (Exception $ex) {
+            catch ( Exception $ex ) {
                 echo "\033[31m Something went wrong while reading the manifest.\033[0m".PHP_EOL;
                 echo $ex;
             }

@@ -12,14 +12,18 @@ function patcher ( $project ) {
         @mkdir( getcwd() . '/.depo', 0777, TRUE );
         
         // Load patch.
-        exec( 'wget -q ' . $patchPath . ' -O' . getcwd() . '/.depo/' . $patchName );
+        exec( 'wget -q ' . $patchPath . ' -O' . getcwd() . '/.depo/' . $patchName, &$output, &$returnWget );
+        
+        if ( $returnWget != 0 ) {
+            die( "\033[31m Patch download failed.\033[0m".PHP_EOL );
+        }
         
         //Patch anwenden.
         passthru( 'cd ' . getcwd() . $patchTarget . ' &&
-            git am < ' . getcwd() .  '/.depo/' . $patchName, &$return );
+            git am < ' . getcwd() .  '/.depo/' . $patchName, &$returnGit );
         
         // On error exit and show notification.
-        if ( $return != 0 ) {
+        if ( $returnGit != 0 ) {
             die( "\033[31m Something went very very wrong.\033[0m".PHP_EOL );
         }
     }
