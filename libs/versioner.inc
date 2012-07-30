@@ -8,25 +8,12 @@ function versioner ($project) {
     $patchDestination = (string)  $projectPath . '/' . $project['name'];  
     $patchName = basename($patchDestination);                                        
 
-    switch ( $infoName ) {
-        case 'jquerycdn':
-            $infoName = 'jquery_cdn';
-            break;
-        
-    }
-    
 
-    
-    foreach(glob($patchDestination . '*/*.info') as $element)    
-{    
-    //echo "Filename: " . $element;
-    
-    exec('echo "version = '.$projectRev.'" >> ' . getcwd(). '/' . $element, &$output, &$returnEcho);
-}    
-    
-    
-    
-    
+    foreach ( glob($patchDestination . '*/*.info') as $element )    
+        {    
+            exec('echo "version = '.$projectRev.'" >> ' . getcwd(). '/' 
+                    . $element, &$output, &$returnEcho);
+        }    
     
     //write revisionsinformation into modulename.info
     exec('echo "version = '.$projectRev.'" >> ' . getcwd(). '/' . $projectPath . '/' .
