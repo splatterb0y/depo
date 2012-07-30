@@ -22,7 +22,7 @@ function downloader($project) {
     
     //if anything while downloading or saving happens show message
     if ( $return != 0 ) {
-            die( "\033[32m Download of " . $patchName . "to " . $target .
+            die( "\033[32m Download of " . $patchName . " to " . $target .
                     " failed.\033[0m".PHP_EOL);
         }
         else{
