@@ -6,13 +6,19 @@ function versioner ($project) {
     $projectRev =  array_pop(explode('/', $project['revision']));                       
     $infoName = array_pop(explode( '/', $project['name']));                            
     $patchDestination = (string)  $projectPath . '/' . $project['name'];  
-    $patchName = basename($patchDestination);                                        
-
-
-    foreach ( glob($patchDestination . '*/*.info') as $element )    
+    $patchName = basename($patchDestination); 
+    
+    $datei = glob($patchDestination . '*.info');
+    
+    foreach ( $datei as $element )    
         {    
             exec('echo "version = '.$projectRev.'" >> ' . getcwd(). '/' 
                     . $element, &$output, &$returnEcho);
+            
+            exec('cd ' . getcwd() . '/' . $projectPath . ' && git commit -a -m "Version: '
+                . $projectRev .'"', &$output, &$returnGit);
+            
+            //echo "$element\n";
         }    
     
     //write revisionsinformation into modulename.info
@@ -25,7 +31,7 @@ function versioner ($project) {
     // commit with git
     exec('cd ' . getcwd() . '/' . $projectPath . ' && git commit -a -m "Version: '
                 . $projectRev .'"', &$output, &$returnGit);
-    
+//    
     if ( $returnGit != 0 ) {
         print_r($project);
         die( "\033[31m Commit of version " . $projectRev . ' to ' . $patchName 
