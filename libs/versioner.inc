@@ -1,6 +1,5 @@
 <?php
 function versioner ($project) {
-    print_r($project);
     
     $projectPath = (string)  $project['path'];                                       //path of the project
     $projectRev =  array_pop(explode('/', $project['revision']));                       // extracts the project revision
