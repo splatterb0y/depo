@@ -17,9 +17,9 @@ function versioner ($project) {
     
 
     
-    foreach(glob($patchDestination . '*.info') as $element)    
+    foreach(glob($patchDestination . '*/*.info') as $element)    
 {    
-    echo "Filename: " . $element;
+    //echo "Filename: " . $element;
     
     exec('echo "version = '.$projectRev.'" >> ' . getcwd(). '/' . $element, &$output, &$returnEcho);
 }    
