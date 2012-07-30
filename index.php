@@ -59,24 +59,23 @@ function _sync() {
     try {
                 $manifest = new SimpleXmlElement('file://'.getcwd().'/.repo/manifest.xml', NULL, TRUE);  
                 
-                $i = 0;
+                
                 foreach ( $manifest as $project ) {
                     //If patch child available start patcher.                
                     if ($project->patch) {
                         require_once('./libs/patcher.inc');
                         patcher($project);
                     }
-                    if( $project->download ) {
+                    if ( $project->download ) {
                         require_once('./libs/downloader.inc');
                         downloader($project);
                     }
                      
-                    if( isset($project['git-version']) && $project['git-version'] == true ) {
+                    if ( isset($project['git-version']) && $project['git-version'] == true ) {
                         require_once('libs/versioner.inc');
                         versioner($project);                        
                     }
-                    $i++;
-                    
+                                        
                 }
                 
                 unset( $manifest );
