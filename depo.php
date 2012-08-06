@@ -12,6 +12,9 @@
  *          repo sync modules/xmlsitemap .. .. 
  * @todo drush befehle ausführen
  * @todo Repo Refs fixen, damit pushen auch möglich ist(?)
+ * @todo Leere Zeile nach 'drupal' fixen(?)
+ * 
+ * @todo Abfrage der Version bei drupal.org
  */
 
 if ( !isset($argv[1]) ) {
@@ -58,21 +61,24 @@ function _sync() {
         $manifest = new SimpleXmlElement('file://' . getcwd() . '/.repo/manifest.xml', NULL, TRUE); 
         
         foreach ( $manifest->project as $project ) {
-
-            echo ":: ".$project['name'].PHP_EOL;
+            
+            $patchRev = (string) $project['revision'];
+            $patchRev = basename($patchRev);
+            
+            echo ":: ".$project['name']." ($patchRev)".PHP_EOL;
 
             if ( $project->patch ) {
-                require_once(dirname(__FILE__).'/libs/patcher.inc');
+                require_once(dirname(__FILE__) . '/libs/patcher.inc');
                 patcher($project);
             }
             
             if ( $project->download ) {
-                require_once(dirname(__FILE__).'/libs/downloader.inc');
-                downloader($project);
+                require_once(dirname(__FILE__) . '/libs/downloader.inc');                          
+                downloader($project);                
             }
 
             if ( isset($project['git-version']) && $project['git-version'] == true ) {
-                require_once(dirname(__FILE__).'/libs/versioner.inc');
+                require_once(dirname(__FILE__) . '/libs/versioner.inc');
                 versioner($project);                        
             }                                        
         }

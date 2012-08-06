@@ -30,7 +30,7 @@ function patcher ( $project ) {
                . " failed.\033[0m".PHP_EOL );
         } 
         else {
-             echo "\033[32m   Applying ". $patchName . ' to ' . $project['name'] 
+             echo "\033[32m    Applying ". $patchName . ' to ' . $project['name'] 
                . " successful.\033[0m".PHP_EOL;
         }
     }
