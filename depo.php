@@ -4,7 +4,7 @@
  * @author Christian Ziegenrücker
  * @author Sebastian Langer
  *  
- * @version 0.2
+ * @version 0.3
  *
  * DePo - Drupal Deploy based on Repo
  * 
@@ -20,7 +20,7 @@ if ( !isset($argv[1]) ) {
     echo "\033[31m No parameters given.\033[0m".PHP_EOL;
 } 
 else {
-    echo "\033[1;37m Repo started...\033[0m".PHP_EOL;
+    echo "\033[1;37m Repo started...\033[0m";
     switch ( $argv[1] ) {
         case 'init':
                 _init();
@@ -43,10 +43,10 @@ function _init() {
         passthru('repo init -u '.$argv[2], &$return);
 
         if ($return == 0) {
-            echo "\033[32m Repo finished successfully.\033[0m".PHP_EOL;
+            echo "\033[32m and finished successfully.\033[0m".PHP_EOL;
         } 
         else {
-            echo "\033[31m Repo not finished successfully.\033[0m".PHP_EOL;
+            echo "\033[31m and a problem occured.\033[0m".PHP_EOL;
         }
         
     }
@@ -54,52 +54,52 @@ function _init() {
 
 function _sync() {
         
-    passthru('repo sync');
+    exec('repo sync 2>&1', &$output, $return);
     
-    try {
-        $manifest = new SimpleXmlElement('file://' . getcwd() . '/.repo/manifest.xml', NULL, TRUE); 
+    if ($return == 0) {
         
-        foreach ( $manifest->project as $project ) {
-                    
-            $patchRev = (string) $project['revision'];
-            $patchRev = basename($patchRev);
-            
-            if($patchRev != "master"){
-                require_once(dirname(__FILE__) . '/libs/versionChecker.inc');
-                $externalVersion = versionChecker($project, '7.x');            
-                $foo = version_compare($patchRev, $externalVersion);
+        echo "\033[32m ... and finished successful.\033[0m".PHP_EOL;
 
-                If ($foo < 0 ){
-                    echo "\033[1;33m" . '    ' . $project['name'] . ' is outdated! Newest available version is '
-                            . $externalVersion . "\033[0m".PHP_EOL;
+        try {
+            $manifest = new SimpleXmlElement('file://' . getcwd() . '/.repo/manifest.xml', NULL, TRUE); 
+
+            foreach ( $manifest->project as $project ) {
+
+                echo ':: '.$project['name'].' ('.basename((string) $project['revision']).')'.PHP_EOL;
+
+                // Because d.o is the default remote location
+                if (empty($project['remote'])) {
+                    require_once(dirname(__FILE__) . '/libs/versionChecker.inc');        
+                    versionChecker($project);
                 }
-            }
-            
-            echo ":: ".$project['name']." ($patchRev)".PHP_EOL;
-            
-            if ( $project->patch ) {
-                require_once(dirname(__FILE__) . '/libs/patcher.inc');
-                patcher($project);
-            }
-            
-            if ( $project->download ){
-                require_once(dirname(__FILE__) . '/libs/downloader.inc');                          
-                downloader($project); 
-				              
+
+                if ( $project->patch ) {
+                    require_once(dirname(__FILE__) . '/libs/patcher.inc');
+                    patcher($project);
+                }
+
+                if ( $project->download ){
+                    require_once(dirname(__FILE__) . '/libs/downloader.inc');                          
+                    downloader($project); 
+
+                }
+
+                if ( isset($project['git-version']) && $project['git-version'] == true ) {
+                    require_once(dirname(__FILE__) . '/libs/versioner.inc');
+                    versioner($project);                        
+                }                                        
             }
 
-            if ( isset($project['git-version']) && $project['git-version'] == true ) {
-                require_once(dirname(__FILE__) . '/libs/versioner.inc');
-                versioner($project);                        
-            }                                        
+            unset( $manifest );
         }
-
-        unset( $manifest );
+        catch ( Exception $ex ) {
+            echo "\033[31m Something went wrong while reading the manifest.\033[0m".PHP_EOL;
+            echo $ex;
+        }
     }
-    catch ( Exception $ex ) {
-        echo "\033[31m Something went wrong while reading the manifest.\033[0m".PHP_EOL;
-        echo $ex;
+    else {
+        echo "\033[31m ... there was a error while running repo.\033[0m".PHP_EOL;
     }
-    
 }
+
 ?>
