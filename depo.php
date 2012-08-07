@@ -54,27 +54,39 @@ function _init() {
 }
 
 function _sync() {
-    
+        
     passthru('repo sync');
     
     try {
         $manifest = new SimpleXmlElement('file://' . getcwd() . '/.repo/manifest.xml', NULL, TRUE); 
         
         foreach ( $manifest->project as $project ) {
-            
+                    
             $patchRev = (string) $project['revision'];
             $patchRev = basename($patchRev);
             
-            echo ":: ".$project['name']." ($patchRev)".PHP_EOL;
+            if($patchRev != "master"){
+                require_once(dirname(__FILE__) . '/libs/versionChecker.inc');
+                $externalVersion = versionChecker($project, '7.x');            
+                $foo = version_compare($patchRev, $externalVersion);
 
+                If ($foo < 0 ){
+                    echo "\033[1;33m" . ':: ' . $project['name'] . ' ist veraltet! Neueste Version ist: '
+                            . $externalVersion . "\033[0m".PHP_EOL;
+                }
+            }
+            
+            echo ":: ".$project['name']." ($patchRev)".PHP_EOL;
+            
             if ( $project->patch ) {
                 require_once(dirname(__FILE__) . '/libs/patcher.inc');
                 patcher($project);
             }
             
-            if ( $project->download ) {
+            if ( $project->download ){
                 require_once(dirname(__FILE__) . '/libs/downloader.inc');                          
-                downloader($project);                
+                downloader($project); 
+				              
             }
 
             if ( isset($project['git-version']) && $project['git-version'] == true ) {
