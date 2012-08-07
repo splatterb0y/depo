@@ -14,7 +14,6 @@
  * @todo Repo Refs fixen, damit pushen auch möglich ist(?)
  * @todo Leere Zeile nach 'drupal' fixen(?)
  * 
- * @todo Abfrage der Version bei drupal.org
  */
 
 if ( !isset($argv[1]) ) {
@@ -71,7 +70,7 @@ function _sync() {
                 $foo = version_compare($patchRev, $externalVersion);
 
                 If ($foo < 0 ){
-                    echo "\033[1;33m" . ':: ' . $project['name'] . ' ist veraltet! Neueste Version ist: '
+                    echo "\033[1;33m" . '   ' . $project['name'] . ' is outdated! Newest available version is '
                             . $externalVersion . "\033[0m".PHP_EOL;
                 }
             }

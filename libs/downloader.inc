@@ -17,11 +17,6 @@ function downloader( $project ) {
         // the patch destination without filename
         $patchDestination = substr($patchDestination, 0, strrpos($patchDestination, "/") + 1);
 
-        require_once(dirname(__FILE__) . '/checker.inc');
-        $versionVorhanden = basename($project['revision']);
-       
-        
-        
                 // creates the target directory
                 @mkdir(getcwd() . '/' . $patchDestination, 0777, TRUE);
 
