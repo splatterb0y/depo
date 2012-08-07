@@ -70,7 +70,7 @@ function _sync() {
                 $foo = version_compare($patchRev, $externalVersion);
 
                 If ($foo < 0 ){
-                    echo "\033[1;33m" . '   ' . $project['name'] . ' is outdated! Newest available version is '
+                    echo "\033[1;33m" . '    ' . $project['name'] . ' is outdated! Newest available version is '
                             . $externalVersion . "\033[0m".PHP_EOL;
                 }
             }
