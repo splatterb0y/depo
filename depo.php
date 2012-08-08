@@ -53,11 +53,11 @@ function _init() {
 }
 
 function _sync() {
-        
-    exec('repo sync 2>&1', &$output, $return);
-    
+
+   passthru('repo sync', $return);
+
     if ($return == 0) {
-        
+
         echo "\033[32m ... and finished successful.\033[0m".PHP_EOL;
 
         try {
