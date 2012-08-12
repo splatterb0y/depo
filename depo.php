@@ -4,12 +4,10 @@
  * @author Christian Ziegenrücker
  * @author Sebastian Langer
  *  
- * @version 0.3
+ * @version 0.4
  *
  * DePo - Drupal Deploy based on Repo
  * 
- * @todo checkout of single/multiple projects but not the whole manifest
- *          repo sync modules/xmlsitemap .. .. 
  * @todo drush befehle ausführen
  * @todo Repo Refs fixen, damit pushen auch möglich ist(?)
  * @todo Leere Zeile nach 'drupal' fixen(?)
@@ -53,18 +51,40 @@ function _init() {
 }
 
 function _sync() {
+    
+    global $argv;
 
-   passthru('repo sync', $return);
+    $argumentString = ' ';
+
+    if(count($argv) > 2) {
+       echo "\033[0;33m(only specified repositories will be updated.)\033[0m";
+
+       $count = 0;
+       $arguments = array();
+       foreach($argv as $argument) {
+           if($count > 1) {
+               $argumentString .= $argument." ";
+               array_push($arguments, $argument);
+           }
+           $count++;
+       }
+       
+    } 
+
+    passthru('repo sync' . $argumentString, $return);
 
     if ($return == 0) {
 
-        echo "\033[32m ... and finished successful.\033[0m".PHP_EOL;
+        echo "\033[32m and finished successful.\033[0m".PHP_EOL;
 
         try {
             $manifest = new SimpleXmlElement('file://' . getcwd() . '/.repo/manifest.xml', NULL, TRUE); 
 
             foreach ( $manifest->project as $project ) {
-
+                if (!empty($arguments) && !in_array($project['name'], $arguments)) {
+                        continue;
+                }
+                    
                 echo ':: '.$project['name'].' ('.basename((string) $project['revision']).')'.PHP_EOL;
 
                 // Because d.o is the default remote location
@@ -87,18 +107,19 @@ function _sync() {
                 if ( isset($project['git-version']) && $project['git-version'] == true ) {
                     require_once(dirname(__FILE__) . '/libs/versioner.inc');
                     versioner($project);                        
-                }                                        
+                }
+                
             }
 
             unset( $manifest );
         }
         catch ( Exception $ex ) {
-            echo "\033[31m Something went wrong while reading the manifest.\033[0m".PHP_EOL;
+            echo "\033[31m something went wrong while reading the manifest.\033[0m".PHP_EOL;
             echo $ex;
         }
     }
     else {
-        echo "\033[31m ... there was a error while running repo.\033[0m".PHP_EOL;
+        echo "\033[31m there was a error while running repo.\033[0m".PHP_EOL;
     }
 }
 
