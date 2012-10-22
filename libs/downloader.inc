@@ -22,7 +22,7 @@ function downloader( $project ) {
 
                 // downloads the file
                 exec( 'wget -q ' . $patchSource . ' -O' . getcwd() . '/' . $patchDestination . 
-                    $patchName, &$output, &$return );
+                    $patchName, $output, $return );
 
                 $target = '/' .$patchDestination . $patchName;
 

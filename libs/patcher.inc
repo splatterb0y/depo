@@ -13,7 +13,7 @@ function patcher ( $project ) {
         @mkdir( getcwd() . '/.depo', 0777, TRUE );
         
         // download patch
-        exec( 'wget -q ' . $patchPath . ' -O' . getcwd() . '/.depo/' . $patchName, &$output, &$returnWget );
+        exec( 'wget -q ' . $patchPath . ' -O' . getcwd() . '/.depo/' . $patchName, $output, $returnWget );
         
         // if download failes exit
         if ( $returnWget != 0 ) {
@@ -22,7 +22,7 @@ function patcher ( $project ) {
         
         // apply patch with git am
         exec( 'cd ' . getcwd() . $patchTarget . ' && 
-            git am -q < ' . getcwd() .  '/.depo/' . $patchName, &$output, &$returnGit );
+            git am -q < ' . getcwd() .  '/.depo/' . $patchName, $output, $returnGit );
         
         // output message to indicate success or failure
         if ( $returnGit != 0 ) {

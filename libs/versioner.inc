@@ -12,8 +12,8 @@ function versioner ( $project ) {
     foreach(rGlob( getcwd(). '/' . $projectPath . "/*.info") as $files) {
          exec('echo "" >> '. $files);
          exec('echo "; Added by depo" >> '. $files);
-         exec('echo "version = '.$projectRev.'" >> '. $files, &$output, &$returnEcho1);
-         exec('echo "project = '.$infoName.'" >> ' .$files, &$output, &$returnEcho2);
+         exec('echo "version = '.$projectRev.'" >> '. $files, $output, $returnEcho1);
+         exec('echo "project = '.$infoName.'" >> ' .$files, $output, $returnEcho2);
     }
     
     // write revision information into modulename.info 
@@ -23,7 +23,7 @@ function versioner ( $project ) {
     
     // commit changes to make them revertable by repo
     exec('cd ' . getcwd() . '/' . $projectPath . ' && git commit -a -m "Version: '
-                . $projectRev .'"', &$output, &$returnGit);
+                . $projectRev .'"', $output, $returnGit);
     
     // output message to indicate success or failure    
     if ( $returnGit != 0 ) {

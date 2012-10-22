@@ -3,20 +3,20 @@
 /**
  * @author Christian Ziegenrücker
  * @author Sebastian Langer
- *  
- * @version 0.4
+ *
+ * @version 0.5
  *
  * DePo - Drupal Deploy based on Repo
- * 
+ *
  * @todo drush befehle ausführen
  * @todo Repo Refs fixen, damit pushen auch möglich ist(?)
  * @todo Leere Zeile nach 'drupal' fixen(?)
- * 
+ *
  */
 
 if ( !isset($argv[1]) ) {
     echo "\033[31m No parameters given.\033[0m".PHP_EOL;
-} 
+}
 else {
     echo "\033[1;37m Repo started...\033[0m";
     switch ( $argv[1] ) {
@@ -26,32 +26,32 @@ else {
         case 'sync':
                 _sync();
             break;
-    }   
+    }
 }
 
 function _init() {
 
-    global $argv; 
+    global $argv;
 
     if ( empty($argv[2]) ) {
         echo "\033[31m Please provide a manifest file.\033[0m".PHP_EOL;
-    } 
+    }
     else {
-
-        passthru('repo init -u '.$argv[2], &$return);
+	$return = NULL;
+        passthru('repo init -u '.$argv[2], $return);
 
         if ($return == 0) {
             echo "\033[32m and finished successfully.\033[0m".PHP_EOL;
-        } 
+        }
         else {
             echo "\033[31m and a problem occured.\033[0m".PHP_EOL;
         }
-        
+
     }
 }
 
 function _sync() {
-    
+
     global $argv;
 
     $argumentString = ' ';
@@ -68,8 +68,8 @@ function _sync() {
            }
            $count++;
        }
-       
-    } 
+
+    }
 
     passthru('repo sync' . $argumentString, $return);
 
@@ -78,18 +78,18 @@ function _sync() {
         echo "\033[32m and finished successful.\033[0m".PHP_EOL;
 
         try {
-            $manifest = new SimpleXmlElement('file://' . getcwd() . '/.repo/manifest.xml', NULL, TRUE); 
+            $manifest = new SimpleXmlElement('file://' . getcwd() . '/.repo/manifest.xml', NULL, TRUE);
 
             foreach ( $manifest->project as $project ) {
                 if (!empty($arguments) && !in_array($project['name'], $arguments)) {
                         continue;
                 }
-                    
+
                 echo ':: '.$project['name'].' ('.basename((string) $project['revision']).')'.PHP_EOL;
 
                 // Because d.o is the default remote location
                 if (empty($project['remote'])) {
-                    require_once(dirname(__FILE__) . '/libs/versionChecker.inc');        
+                    require_once(dirname(__FILE__) . '/libs/versionChecker.inc');
                     versionChecker($project);
                 }
 
@@ -99,16 +99,16 @@ function _sync() {
                 }
 
                 if ( $project->download ){
-                    require_once(dirname(__FILE__) . '/libs/downloader.inc');                          
-                    downloader($project); 
+                    require_once(dirname(__FILE__) . '/libs/downloader.inc');
+                    downloader($project);
 
                 }
 
                 if ( isset($project['git-version']) && $project['git-version'] == true ) {
                     require_once(dirname(__FILE__) . '/libs/versioner.inc');
-                    versioner($project);                        
+                    versioner($project);
                 }
-                
+
             }
 
             unset( $manifest );
