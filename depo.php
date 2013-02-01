@@ -26,6 +26,9 @@ else {
         case 'sync':
                 _sync();
             break;
+        case 'changelog':
+                _changelog();
+            break;
     }
 }
 
@@ -121,6 +124,37 @@ function _sync() {
     else {
         echo "\033[31m there was a error while running repo.\033[0m".PHP_EOL;
     }
+}
+
+function _changelog() {
+    $dataset = [];
+    exec('git --no-pager log --pretty=format:"%cd %an | %s" --date=short', $output);
+    foreach($output as $line) {
+        $time = substr($line, 0, 10);
+        $line = substr($line, 10);       
+        $autor = substr($line, 0, strpos($line, '|'));
+        $message = substr($line, strpos($line, '|')+1, strlen($line));
+        unset($tmp, $line);
+
+        if(!isset($dataset[$time])) {
+            $dataset[$time] = [];
+        }
+
+        $dataset[$time][] = array(
+            'autor' => trim($autor),
+            'message' => trim($message)
+        );
+    }
+
+    $handle = fopen("test.txt", 'w+');
+    foreach(array_keys($dataset) as $time) {
+        fwrite($handle, $time. "\n");
+        foreach($dataset[$time] as $row) {
+            fwrite($handle, "\t" . $row['autor'] . " : " . $row['message'] . "\n");
+        }
+    }
+    fclose($handle);
+
 }
 
 ?>
