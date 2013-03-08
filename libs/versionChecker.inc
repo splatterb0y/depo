@@ -14,6 +14,11 @@ function versionChecker ( $project, $apiVersion = '7.x') {
     try {
         $feed = new SimpleXmlElement($content);
 
+	if(is_null($feed->releases->release)) {
+		echo  "\033[0;33m" . '    ' . ' No release info available' . PHP_EOL;
+		return;
+	};
+
         foreach($feed->releases->release as $release) {                    
             if($release->status != 'published'){
                 break;
